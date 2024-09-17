@@ -3,19 +3,22 @@
   function extractReviews() {
     let reviews = [];
 
-    // Check if the reviews container exists
-    let reviewElements = document.querySelectorAll('.feedback-item');
-    if (!reviewElements.length) {
-      alert('No reviews found. Please make sure you are on a product review page.');
-      return;
-    }
+    // Select all review elements
+    document.querySelectorAll('.list--itemBox--zF4Z5NT').forEach(item => {
+      // Count the number of stars by the presence of .comet-icon-starreviewfilled elements
+      let rating = item.querySelectorAll('.comet-icon-starreviewfilled').length;
 
-    // Iterate over each review element
-    reviewElements.forEach(item => {
-      let rating = item.querySelector('.star-view span') ? item.querySelector('.star-view span').textContent.trim() : 'N/A';
-      let author = item.querySelector('.user-name') ? item.querySelector('.user-name').textContent.trim() : 'Anonymous';
-      let content = item.querySelector('.feedback-text') ? item.querySelector('.feedback-text').textContent.trim() : 'No review';
-      reviews.push({rating: rating, author: author, content: content});
+      // Extract review text
+      let content = item.querySelector('.list--itemReview--hBFPNly') ? item.querySelector('.list--itemReview--hBFPNly').textContent.trim() : 'No review';
+
+      // Extract author and date
+      let authorDate = item.querySelector('.list--itemInfo--fb1A_M1') ? item.querySelector('.list--itemInfo--fb1A_M1').textContent.trim() : 'Anonymous';
+
+      // Extract product variant (e.g., color/size)
+      let variant = item.querySelector('.list--itemSku--o3EjCHG') ? item.querySelector('.list--itemSku--o3EjCHG').textContent.trim() : 'No variant information';
+
+      // Push review data to the reviews array
+      reviews.push({rating: rating, content: content, authorDate: authorDate, variant: variant});
     });
 
     // If no reviews were extracted
@@ -35,9 +38,8 @@
   var script = document.createElement('script');
   script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js";
   script.onload = function() {
-    // Wait for the page to fully load, then extract reviews after 3 seconds
+    // Wait for 3 seconds to ensure all reviews are loaded, then extract
     setTimeout(extractReviews, 3000);
   };
   document.head.appendChild(script);
 })();
-
